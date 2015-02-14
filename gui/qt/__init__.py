@@ -147,9 +147,17 @@ class ElectrumGui:
         self.current_window.pay_from_URI(uri)
 
 
-    def main(self, url):
+    def check_last_wallet(self):
+        last_wallet = self.config.get('last_wallet')
+        return last_wallet and os.path.isfile(last_wallet)
 
-        storage = WalletStorage(self.config)
+
+    def main(self, url):
+        if self.check_last_wallet():
+            storage = WalletStorage({'wallet_path': self.config.get('last_wallet')})
+        else:
+            storage = WalletStorage(self.config)
+
         if storage.file_exists:
             try:
                 wallet = Wallet(storage)
